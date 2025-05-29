@@ -1,6 +1,7 @@
 {
-  "name": "@hypertheory/ng-outbox",
+  "name": "ng-outbox",
   "version": "0.0.1",
+  "private": false,
   "peerDependencies": {
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",

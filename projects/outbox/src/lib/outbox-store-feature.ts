@@ -1,10 +1,5 @@
 import { computed, inject, Signal } from '@angular/core';
-import {
-  signalStoreFeature,
-  withComputed,
-  withMethods,
-  withProps,
-} from '@ngrx/signals';
+import { signalStoreFeature, withComputed, withProps } from '@ngrx/signals';
 import { OutboxStore } from './outbox-store';
 
 export function withOutbox<T extends { id: string }>(
@@ -15,17 +10,13 @@ export function withOutbox<T extends { id: string }>(
     withProps(() => ({
       ob: inject(OutboxStore),
     })),
-    withMethods((store) => {
-      return {
-        clearError: (errorId: string) => {
-          store.ob.clearError(errorId);
-        },
-      };
-    }),
+
     withComputed((store) => {
       return {
         outboxAugmentedList: computed(() => {
-          const errors = store.ob.deadLetters().filter((d) => d.name === name);
+          const errors = store.ob
+            .deadLettersEntities()
+            .filter((d) => d.name === name);
           const obEntities = store.ob.entities().filter((a) => a.name === name);
           const deletions = obEntities
             .filter((e) => e.kind === 'deletion')

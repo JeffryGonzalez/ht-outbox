@@ -5,10 +5,10 @@ import {
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { inject } from '@angular/core';
 
+import { injectDispatch } from '@ngrx/signals/events';
 import { catchError, tap } from 'rxjs';
-import { OutboxStore } from './outbox-store';
+import { outboxEvents, outboxInternalEvents } from './events';
 import {
   ErrorResponseEntity,
   OUTBOX_SOURCED,
@@ -19,7 +19,8 @@ import {
 export function withOutboxFeatureInterceptor(): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const outbox = req.context.get(OUTBOX_SOURCED);
-    const store = inject(OutboxStore);
+    const dispatcher = injectDispatch(outboxEvents);
+    const internalDispatcher = injectDispatch(outboxInternalEvents);
     if (outbox) {
       const id = req.context.get(OUTBOX_SOURCED_ID) || crypto.randomUUID();
       const payload: RequestEntity = {
@@ -30,11 +31,14 @@ export function withOutboxFeatureInterceptor(): HttpInterceptorFn {
         kind: outbox.kind,
         method: req.method,
       };
-      store.requestSent(payload);
+      internalDispatcher.requestSent(payload);
       return next(req).pipe(
         tap((r) => {
           if (r.type === HttpEventType.Response) {
-            store.responseReceived({ ...payload, timestamp: Date.now() });
+            internalDispatcher.responseReceived({
+              ...payload,
+              timestamp: Date.now(),
+            });
           }
         }),
         catchError((error: HttpErrorResponse) => {
@@ -51,7 +55,7 @@ export function withOutboxFeatureInterceptor(): HttpInterceptorFn {
 
             timestamp: Date.now(),
           };
-          store.responseError(errorPayload);
+          dispatcher.responseHadError(errorPayload);
           throw error;
         }),
       );

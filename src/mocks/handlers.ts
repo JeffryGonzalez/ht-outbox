@@ -1,3 +1,3 @@
-import { WELCOME_HANDLERS } from './welcome-handlers';
+import { WorkersHandler } from './workers-handler';
 
-export const handlers = [...WELCOME_HANDLERS];
+export const handlers = [...WorkersHandler];
