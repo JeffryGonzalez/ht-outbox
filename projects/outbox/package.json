@@ -1,9 +1,11 @@
 {
-  "name": "outbox",
+  "name": "@hypertheory/ng-outbox",
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0"
+    "@angular/core": "^20.0.0",
+    "@ngrx/signals": "^19.2.0",
+    "@angular-architects/ngrx-toolkit": "^19.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

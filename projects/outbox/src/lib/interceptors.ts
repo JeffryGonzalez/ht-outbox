@@ -16,7 +16,7 @@ import {
   RequestEntity,
 } from './types';
 
-export function addOutboxFeatureInterceptor(): HttpInterceptorFn {
+export function withOutboxFeatureInterceptor(): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const outbox = req.context.get(OUTBOX_SOURCED);
     const store = inject(OutboxStore);
